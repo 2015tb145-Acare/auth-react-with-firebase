@@ -1,10 +1,26 @@
-import React from "react";
+import React, { useContext, useState, useRef } from "react";
+import { UserContext } from "../contexts/userContext";
 
 export default function SignInModal() {
+  const { modalState, toggleModals } = useContext(UserContext);
+  const inputs = useRef([]);
+  const [inputValidation, setInputValidation] = useState("");
+  const addInput = (el) => {
+    if (el && !inputs.current.includes(el)) {
+      inputs.current.push(el);
+    }
+  };
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+  };
   return (
     <>
-      <div className="position-fixed top-0 vw-100 vh-100">
-        <div className="w-100 h-100 bg-dark bg-opacity-75">
+      {modalState.signInModal && (
+        <div className="position-fixed top-0 vw-100 vh-100">
+          <div
+            className="w-100 h-100 bg-dark bg-opacity-75"
+            onClick={() => toggleModals()}
+          />
           <div
             className="position-absolute top-50 start-50 translate-middle"
             style={{ minWidth: "400px" }}
@@ -13,16 +29,20 @@ export default function SignInModal() {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title">Sign In</h5>
-                  <button className="btn-close"></button>
+                  <button
+                    className="btn-close"
+                    onClick={() => toggleModals()}
+                  ></button>
                 </div>
                 <div className="modal-body">
-                  <form className="sign-in-form">
+                  <form className="sign-in-form" onSubmit={handleFormSubmit}>
                     <div className="mb-3">
                       <label htmlFor="signInEmail" className="form-label">
                         Adresse Email
                       </label>
                       <input
                         id="signInEmail"
+                        ref={addInput}
                         name="email"
                         type="email"
                         required
@@ -36,6 +56,7 @@ export default function SignInModal() {
                       </label>
                       <input
                         id="signInPassword"
+                        ref={addInput}
                         name="password"
                         type="password"
                         required
@@ -50,7 +71,7 @@ export default function SignInModal() {
             </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
