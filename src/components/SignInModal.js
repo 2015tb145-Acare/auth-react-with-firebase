@@ -1,25 +1,44 @@
 import React, { useContext, useState, useRef } from "react";
 import { UserContext } from "../contexts/userContext";
+import { FirebaseContext } from "../contexts/firebaseContext";
 
 export default function SignInModal() {
   const { modalState, toggleModals } = useContext(UserContext);
+  const { signIn } = useContext(FirebaseContext);
   const inputs = useRef([]);
+  const formRef = useRef();
   const [inputValidation, setInputValidation] = useState("");
   const addInput = (el) => {
     if (el && !inputs.current.includes(el)) {
       inputs.current.push(el);
     }
   };
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const credential = await signIn(
+        inputs.current[0].value,
+        inputs.current[1].value
+      );
+      formRef.current.reset();
+      closeModal();
+      console.log("your're signIn !", credential);
+    } catch (error) {
+      setInputValidation("Oups, email or password is not valid");
+    }
   };
+  const closeModal = () => {
+    setInputValidation("");
+    toggleModals();
+  };
+
   return (
     <>
       {modalState.signInModal && (
         <div className="position-fixed top-0 vw-100 vh-100">
           <div
             className="w-100 h-100 bg-dark bg-opacity-75"
-            onClick={() => toggleModals()}
+            onClick={closeModal}
           />
           <div
             className="position-absolute top-50 start-50 translate-middle"
@@ -29,13 +48,14 @@ export default function SignInModal() {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title">Sign In</h5>
-                  <button
-                    className="btn-close"
-                    onClick={() => toggleModals()}
-                  ></button>
+                  <button className="btn-close" onClick={closeModal}></button>
                 </div>
                 <div className="modal-body">
-                  <form className="sign-in-form" onSubmit={handleFormSubmit}>
+                  <form
+                    ref={formRef}
+                    className="sign-in-form"
+                    onSubmit={handleFormSubmit}
+                  >
                     <div className="mb-3">
                       <label htmlFor="signInEmail" className="form-label">
                         Adresse Email
@@ -63,7 +83,7 @@ export default function SignInModal() {
                         className="form-control"
                       />
                     </div>
-                    <p className="text-danger py-1"></p>
+                    <p className="text-danger py-1">{inputValidation}</p>
                     <button className="btn btn-primary">Envoyer</button>
                   </form>
                 </div>

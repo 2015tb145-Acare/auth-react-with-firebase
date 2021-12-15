@@ -1,16 +1,19 @@
 import React, { useContext, useState, useRef } from "react";
 import { UserContext } from "../contexts/userContext";
+import { FirebaseContext } from "../contexts/firebaseContext";
 
 export default function SignUpModal() {
   const { modalState, toggleModals } = useContext(UserContext);
+  const { signUp } = useContext(FirebaseContext);
   const inputs = useRef([]);
+  const formRef = useRef();
   const [inputValidation, setInputValidation] = useState("");
   const addInput = (el) => {
     if (el && !inputs.current.includes(el)) {
       inputs.current.push(el);
     }
   };
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     // front inputs validation
     if (inputs.current[1].value.length < 8) {
@@ -21,14 +24,35 @@ export default function SignUpModal() {
       setInputValidation("Passwords don't match");
       return;
     }
+    try {
+      const credential = await signUp(
+        inputs.current[0].value,
+        inputs.current[1].value
+      );
+      formRef.current.reset();
+      closeModal();
+      console.log("your're signUp !", credential);
+    } catch (error) {
+      if (error.code === "auth/invalid-email") {
+        setInputValidation("Email format invalid");
+      }
+      if (error.code === "auth/email-already-in-use") {
+        setInputValidation("Email already used");
+      }
+    }
   };
+  const closeModal = () => {
+    setInputValidation("");
+    toggleModals();
+  };
+
   return (
     <>
       {modalState.signUpModal && (
         <div className="position-fixed top-0 vw-100 vh-100">
           <div
             className="w-100 h-100 bg-dark bg-opacity-75"
-            onClick={() => toggleModals()}
+            onClick={closeModal}
           />
           <div
             className="position-absolute top-50 start-50 translate-middle"
@@ -38,13 +62,14 @@ export default function SignUpModal() {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title">Sign Up</h5>
-                  <button
-                    className="btn-close"
-                    onClick={() => toggleModals()}
-                  ></button>
+                  <button className="btn-close" onClick={closeModal}></button>
                 </div>
                 <div className="modal-body">
-                  <form className="sign-up-form" onSubmit={handleFormSubmit}>
+                  <form
+                    ref={formRef}
+                    className="sign-up-form"
+                    onSubmit={handleFormSubmit}
+                  >
                     <div className="mb-3">
                       <label htmlFor="signUpEmail" className="form-label">
                         Adresse Email
