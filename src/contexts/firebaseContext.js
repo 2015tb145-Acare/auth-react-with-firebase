@@ -16,8 +16,18 @@ export function FirebaseContextProvider(props) {
 
   const navigate = useNavigate();
 
-  const signUp = (email, password) =>
-    createUserWithEmailAndPassword(auth, email, password);
+  const signUp = async (email, password) => {
+    try {
+      const newUserCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      return newUserCredential;
+    } catch (error) {
+      return error;
+    }
+  };
 
   const signIn = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
@@ -26,7 +36,6 @@ export function FirebaseContextProvider(props) {
     try {
       await signOut(auth);
       navigate("/");
-      console.log("your're logout !");
     } catch (error) {
       alert(
         "Oups, something is wrong ! Please check your internet connexion & retry..."

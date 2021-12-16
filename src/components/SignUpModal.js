@@ -23,17 +23,18 @@ export default function SignUpModal() {
       setInputValidation("Passwords don't match");
       return;
     }
-    try {
-      await signUp(inputs.current[0].value, inputs.current[1].value);
-      closeModal();
-    } catch (error) {
-      if (error.code === "auth/invalid-email") {
+    // back inputs validation
+    signUp(inputs.current[0].value, inputs.current[1].value).then((result) => {
+      if (result.message === "Firebase: Error (auth/invalid-email).") {
         setInputValidation("Email format invalid");
-      }
-      if (error.code === "auth/email-already-in-use") {
+      } else if (
+        result.message === "Firebase: Error (auth/email-already-in-use)."
+      ) {
         setInputValidation("Email already used");
+      } else {
+        closeModal();
       }
-    }
+    });
   };
   const closeModal = () => {
     setInputValidation("");
