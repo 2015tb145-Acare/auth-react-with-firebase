@@ -6,7 +6,6 @@ export default function SignUpModal() {
   const { modalState, toggleModals } = useContext(UserContext);
   const { signUp } = useContext(FirebaseContext);
   const inputs = useRef([]);
-  const formRef = useRef();
   const [inputValidation, setInputValidation] = useState("");
   const addInput = (el) => {
     if (el && !inputs.current.includes(el)) {
@@ -25,13 +24,8 @@ export default function SignUpModal() {
       return;
     }
     try {
-      const credential = await signUp(
-        inputs.current[0].value,
-        inputs.current[1].value
-      );
-      formRef.current.reset();
+      await signUp(inputs.current[0].value, inputs.current[1].value);
       closeModal();
-      console.log("your're signUp !", credential);
     } catch (error) {
       if (error.code === "auth/invalid-email") {
         setInputValidation("Email format invalid");
@@ -65,11 +59,7 @@ export default function SignUpModal() {
                   <button className="btn-close" onClick={closeModal}></button>
                 </div>
                 <div className="modal-body">
-                  <form
-                    ref={formRef}
-                    className="sign-up-form"
-                    onSubmit={handleFormSubmit}
-                  >
+                  <form className="sign-up-form" onSubmit={handleFormSubmit}>
                     <div className="mb-3">
                       <label htmlFor="signUpEmail" className="form-label">
                         Adresse Email

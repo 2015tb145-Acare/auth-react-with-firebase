@@ -1,12 +1,13 @@
 import React, { useContext, useState, useRef } from "react";
 import { UserContext } from "../contexts/userContext";
 import { FirebaseContext } from "../contexts/firebaseContext";
+import { useNavigate } from "react-router-dom";
 
 export default function SignInModal() {
   const { modalState, toggleModals } = useContext(UserContext);
+  const navigate = useNavigate();
   const { signIn } = useContext(FirebaseContext);
   const inputs = useRef([]);
-  const formRef = useRef();
   const [inputValidation, setInputValidation] = useState("");
   const addInput = (el) => {
     if (el && !inputs.current.includes(el)) {
@@ -16,13 +17,9 @@ export default function SignInModal() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const credential = await signIn(
-        inputs.current[0].value,
-        inputs.current[1].value
-      );
-      formRef.current.reset();
+      await signIn(inputs.current[0].value, inputs.current[1].value);
       closeModal();
-      console.log("your're signIn !", credential);
+      navigate("/private/profile");
     } catch (error) {
       setInputValidation("Oups, email or password is not valid");
     }
@@ -51,11 +48,7 @@ export default function SignInModal() {
                   <button className="btn-close" onClick={closeModal}></button>
                 </div>
                 <div className="modal-body">
-                  <form
-                    ref={formRef}
-                    className="sign-in-form"
-                    onSubmit={handleFormSubmit}
-                  >
+                  <form className="sign-in-form" onSubmit={handleFormSubmit}>
                     <div className="mb-3">
                       <label htmlFor="signInEmail" className="form-label">
                         Adresse Email

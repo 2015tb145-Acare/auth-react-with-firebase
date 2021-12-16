@@ -28,6 +28,13 @@ export default function Navbar() {
     } else {
       return (
         <>
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <Link to="/private/profile" className="nav-link">
+                Profile
+              </Link>
+            </li>
+          </ul>
           <button className="btn btn-danger ms-2" onClick={logOut}>
             logout
           </button>
@@ -37,12 +44,14 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="navbar navbar-light bg-light px-4">
-      <Link to="/" className="navbar-brand">
-        AuthReact
-      </Link>
-      <div>
-        <Logger />
+    <nav className="navbar navbar-expand-sm navbar-light bg-light px-4">
+      <div className="container-fluid">
+        <Link to="/" className="navbar-brand">
+          AuthReact
+        </Link>
+        <div className="collapse navbar-collapse">
+          <Logger />
+        </div>
       </div>
     </nav>
   );
