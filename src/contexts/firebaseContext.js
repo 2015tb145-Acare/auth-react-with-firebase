@@ -1,7 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 import {
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
@@ -23,7 +24,11 @@ export function FirebaseContextProvider(props) {
         email,
         password
       );
-      return newUserCredential;
+      await sendEmailVerification(newUserCredential.user, {
+        url: "http://localhost:3000",
+      });
+      logOut();
+      return newUserCredential.user;
     } catch (error) {
       return error;
     }
@@ -36,6 +41,7 @@ export function FirebaseContextProvider(props) {
     try {
       await signOut(auth);
       navigate("/");
+      window.location.reload(false);
     } catch (error) {
       alert(
         "Oups, something is wrong ! Please check your internet connexion & retry..."

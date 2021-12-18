@@ -8,6 +8,7 @@ export default function Navbar() {
   const { logOut, currentUser } = useContext(FirebaseContext);
 
   const Logger = () => {
+    // if (!currentUser || !currentUser.emailVerified) {
     if (!currentUser) {
       return (
         <>

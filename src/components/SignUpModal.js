@@ -33,6 +33,7 @@ export default function SignUpModal() {
         setInputValidation("Email already used");
       } else {
         closeModal();
+        alert("Un email de validation vient de vous être envoyé");
       }
     });
   };
