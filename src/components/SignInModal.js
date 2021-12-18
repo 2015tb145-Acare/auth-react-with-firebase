@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function SignInModal() {
   const { modalState, toggleModals } = useContext(UserContext);
   const navigate = useNavigate();
-  const { signIn } = useContext(FirebaseContext);
+  const { signIn, logOut } = useContext(FirebaseContext);
   const inputs = useRef([]);
   const [inputValidation, setInputValidation] = useState("");
   const addInput = (el) => {
@@ -17,9 +17,20 @@ export default function SignInModal() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signIn(inputs.current[0].value, inputs.current[1].value);
+      const { user } = await signIn(
+        inputs.current[0].value,
+        inputs.current[1].value
+      );
       closeModal();
-      navigate("/private/profile");
+      console.log(user);
+      if (user.emailVerified) {
+        navigate("/private/profile");
+      } else {
+        logOut();
+        alert(
+          "Oups, il semble que vous n'avez pas encore validé votre adresse mail"
+        );
+      }
     } catch (error) {
       setInputValidation("Oups, email or password is not valid");
     }

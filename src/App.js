@@ -6,7 +6,8 @@ import SignInModal from "./components/SignInModal";
 
 import Home from "./pages/Home";
 import Private from "./pages/Private";
-import Profile from "./pages/Private/profile";
+import Validation from "./pages/Validation";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <SignInModal />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/validation" element={<Validation />} />
         <Route path="/private" element={<Private />}>
           <Route path="/private/profile" element={<Profile />} />
         </Route>
