@@ -14,27 +14,27 @@ export default function SignInModal() {
       inputs.current.push(el);
     }
   };
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
-    try {
-      const { user } = await signIn(
-        inputs.current[0].value,
-        inputs.current[1].value
-      );
-      closeModal();
-      console.log(user);
-      if (user.emailVerified) {
-        navigate("/private/profile");
+    signIn(inputs.current[0].value, inputs.current[1].value).then((result) => {
+      if (result.message) {
+        setInputValidation("Oups, email or password is not valid");
       } else {
-        logOut();
-        alert(
-          "Oups, il semble que vous n'avez pas encore validé votre adresse mail"
-        );
+        const { user } = result;
+        if (user.emailVerified) {
+          navigate("/private/profile");
+        } else {
+          logOut();
+          alert(
+            "Oups, il semble que vous n'avez pas encore validé votre adresse mail"
+          );
+        }
+        closeModal();
+        console.log(user);
       }
-    } catch (error) {
-      setInputValidation("Oups, email or password is not valid");
-    }
+    });
   };
+
   const closeModal = () => {
     setInputValidation("");
     toggleModals();

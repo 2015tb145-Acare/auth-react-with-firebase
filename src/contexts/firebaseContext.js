@@ -17,6 +17,13 @@ export function FirebaseContextProvider(props) {
 
   const navigate = useNavigate();
 
+  /**
+   * Sign up with email validation
+   *
+   * @param {String} email
+   * @param {String} password
+   * @returns Promise<UserCredential>
+   */
   const signUp = async (email, password) => {
     try {
       const newUserCredential = await createUserWithEmailAndPassword(
@@ -34,9 +41,29 @@ export function FirebaseContextProvider(props) {
     }
   };
 
-  const signIn = (email, password) =>
-    signInWithEmailAndPassword(auth, email, password);
+  /**
+   * Sign in with email and password
+   *
+   * @param {String} email
+   * @param {String} password
+   * @returns Promise<UserCredential>
+   */
+  const signIn = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      return userCredential;
+    } catch (error) {
+      return error;
+    }
+  };
 
+  /**
+   * Log out user
+   */
   const logOut = async () => {
     try {
       await signOut(auth);

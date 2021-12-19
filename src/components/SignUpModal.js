@@ -12,7 +12,7 @@ export default function SignUpModal() {
       inputs.current.push(el);
     }
   };
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = (e) => {
     e.preventDefault();
     // front inputs validation
     if (inputs.current[1].value.length < 8) {
